@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Producto from '../components/Producto';
+import './ProductosPage.css';
 
 function ProductosPage() {
     const [productos, setProductos] = useState([]);
@@ -23,14 +24,25 @@ function ProductosPage() {
 
     useEffect(() => {
         obtenerProductos();
-    }, [obtenerProductos]);
+    }, [obtenerProductos]);//para aplicar filtros usar el boton, añadir obtenerProductos en los corchetes
+
+
+    const agregarAlCarrito = async (productoId) => {
+        try{
+            await axios.post('http://localhost:3000/api/carrito/add',{
+                productoId,
+                cantidad: 1
+            });
+            alert("Producto agregado al carrito")
+        } catch (error) {
+            console.error("Error al agregar producto al carrito", error);
+        }
+    };
 
     return (
-        <div>
+        <div className='productos-contenedor'>
             <h1>Lista de Productos</h1>
-
-            {/* Filtros */}
-            <div>
+            <div className='filtros-contenedor'>
                 <input
                     type="text"
                     placeholder="Buscar por nombre"
@@ -60,13 +72,14 @@ function ProductosPage() {
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
                 />
-                <button onClick={obtenerProductos}>Aplicar Filtros</button>
+                <button onClick={obtenerProductos} className='filtro-input'>Aplicar Filtros</button>
             </div>
 
-            {/* Lista de Productos */}
+            <div className='productos-lista'>
             {productos.map((producto) => (
-                <Producto key={producto.id} producto={producto} />
+                <Producto key={producto.id} producto={producto} onAgregarAlCarrito={agregarAlCarrito} />
             ))}
+            </div>
         </div>
     );
 }

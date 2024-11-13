@@ -1,0 +1,21 @@
+.productos-contenedor {
+    padding: 20px;
+}
+
+.filtros-contenedor {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.filtro-input {
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+.productos-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}

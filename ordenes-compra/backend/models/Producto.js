@@ -23,7 +23,7 @@ const Producto = sequelize.define('Producto', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    categoria: { // Nueva columna para categoría
+    categoria: { 
         type: DataTypes.STRING,
         allowNull: true,
     },

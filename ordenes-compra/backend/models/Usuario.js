@@ -40,9 +40,9 @@ const Usuario = sequelize.define('Usuario', {
     }
 },
 {
-    timestamps: true,          // Activa timestamps automáticos
-    createdAt: 'createdAt',    // Nombre personalizado para createdAt
-    updatedAt: 'updatedAt'     // Nombre personalizado para updatedAt
+    timestamps: true,          
+    createdAt: 'createdAt',    
+    updatedAt: 'updatedAt'     
 });
 
 module.exports = Usuario;
