@@ -13,12 +13,29 @@ exports.agregarProducto = async (req, res) => {
         const producto = await Producto.findByPk(productoId);
         if (!producto) return res.status(404).send('Producto no encontrado');
 
-        const item = await CarritoItem.create({
-            carrito_id: carritoId,
-            producto_id: productoId,
-            cantidad,
-            precio: producto.precio * cantidad
+        if (producto.stock < cantidad) {
+            return res.status(400).send(`Stock insuficiente. Solo quedan ${producto.stock} unidades.`);
+        }
+
+        let item = await CarritoItem.findOne({
+            where: {
+                carrito_id: carritoId,
+                producto_id: productoId
+            }
         });
+
+        if (item) {
+            item.cantidad += cantidad;
+            item.precio = item.cantidad * producto.precio;
+            await item.save();
+        } else {
+            item = await CarritoItem.create({
+                carrito_id: carritoId,
+                producto_id: productoId,
+                cantidad,
+                precio: producto.precio * cantidad
+            });
+        }
 
         res.status(201).send('Producto agregado al carrito');
     } catch (error) {
@@ -26,6 +43,7 @@ exports.agregarProducto = async (req, res) => {
         res.status(500).json('Error al agregar producto al carrito');
     }
 };
+
 
 //Mostrar carrito
 exports.mostrarCarrito = async (req, res) => {
@@ -77,13 +95,15 @@ exports.eliminarProducto = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const item = await CarritoItem.findByPk(id);
-        if (!item) return res.status(404).json('Producto no encontrado en el carrito');
+        const item = await CarritoItem.findByPk(id); // Busca el producto en carrito_items
+        if (!item) {
+            return res.status(404).json('Producto no encontrado en el carrito');
+        }
 
-        await item.destroy();
-        res.send('Producto eliminado del carrito');
+        await item.destroy(); // Elimina el producto del carrito
+        res.json({ message: 'Producto eliminado del carrito correctamente.' });
     } catch (error) {
-        console.error(error);
+        console.error('Error al eliminar el producto del carrito:', error);
         res.status(500).json('Error al eliminar el producto del carrito');
     }
 };
